@@ -1,0 +1,120 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{style/znu-ee}[2026/11/24 Zanjan EE undergraduate project layout]
+
+\newif\ifznu@portablefonts
+\DeclareOption{portablefonts}{\znu@portablefontstrue}
+\ProcessOptions\relax
+
+\RequirePackage[margin=1in,footskip=22pt]{geometry}
+\RequirePackage{amsmath}
+\RequirePackage{graphicx}
+\RequirePackage{booktabs}
+\RequirePackage{setspace}
+\RequirePackage{etoolbox}
+\RequirePackage{titlesec}
+\RequirePackage{tocloft}
+\RequirePackage[font=small,labelfont=bf]{caption}
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{xepersian}
+
+\ifznu@portablefonts
+  \settextfont[Path=fonts/,BoldFont=Amiri-Bold.ttf,
+    ItalicFont=Amiri-Italic.ttf,BoldItalicFont=Amiri-BoldItalic.ttf]{Amiri-Regular.ttf}
+  \setlatintextfont{Latin Modern Roman}
+\else
+  \IfFileExists{fonts/local/BNazanin.ttf}{%
+    \settextfont[Path=fonts/local/,Scale=1.16,BoldFont=BNazanin-Bold.ttf]{BNazanin.ttf}%
+  }{%
+    \settextfont[Scale=1.16,BoldFont={B Nazanin Bold}]{B Nazanin}%
+  }
+  \IfFileExists{fonts/local/TimesNewRoman.ttf}{%
+    \setlatintextfont[Path=fonts/local/,BoldFont=TimesNewRoman-Bold.ttf,
+      ItalicFont=TimesNewRoman-Italic.ttf,BoldItalicFont=TimesNewRoman-BoldItalic.ttf]{TimesNewRoman.ttf}%
+  }{%
+    \setlatintextfont{Times New Roman}%
+  }
+\fi
+\pdfstringdefDisableCommands{\def\lr#1{#1}}
+
+\titleformat{\chapter}[block]
+  {\centering\bfseries\LARGE}{\chaptertitlename\enspace\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{.34\textheight}{0pt}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+\setlength{\emergencystretch}{2em}
+\raggedbottom
+
+\newcommand{\ThesisFrontMatter}{%
+  \pagenumbering{abjad}%
+  \pagestyle{plain}%
+  \setstretch{1.45}%
+}
+
+\newcommand{\ThesisCover}{%
+  \hypersetup{pdftitle={\ThesisTitle},pdfauthor={\ThesisStudent}}%
+  \thispagestyle{empty}%
+  \begingroup
+  \centering
+  \IfFileExists{figures/university-logo.pdf}{%
+    \includegraphics[width=4cm,height=4cm,keepaspectratio]{figures/university-logo.pdf}\par
+  }{{\Large\bfseries دانشگاه زنجان\par}}%
+  \medskip
+  دانشکدۀ فنی و مهندسی\par
+  گروه مهندسی برق\enspace (\ThesisField)\par
+  \medskip
+  پروژۀ کارشناسی\par
+  \vfill
+  {\LARGE\bfseries\ThesisTitle\par}%
+  \ifdefempty{\ThesisSubtitle}{}{\medskip\ThesisSubtitle\par}%
+  \vfill
+  {\large استاد راهنما\enspace \ThesisSupervisor\par}%
+  \vfill
+  {\large دانشجو\enspace \ThesisStudent\par}%
+  \vfill
+  \ThesisDefenceDate\par
+  \endgroup
+  \clearpage
+}
+
+\newcommand{\ThesisPreface}{%
+  \thispagestyle{empty}%
+  \null\vfill
+  {\centering\Huge\bfseries بسم الله الرحمن الرحیم\par}%
+  \vfill\null
+  \clearpage
+}
+
+\newenvironment{ThesisAbstract}{%
+  \begin{center}\large\bfseries چکیده\end{center}%
+}{\clearpage}
+
+\newcommand{\ThesisContents}{%
+  \begingroup
+  \titlespacing*{\chapter}{0pt}{0pt}{18pt}%
+  \tableofcontents
+  \clearpage
+  \endgroup
+}
+
+\newcommand{\ThesisMainMatter}{%
+  \pagenumbering{arabic}%
+  \setstretch{1.9}%
+}
+
+\newcommand{\ThesisChapter}[1]{\chapter{#1}\clearpage}
+
+\newcommand{\ThesisReferences}{%
+  \clearpage
+  \begingroup
+  \setstretch{1.18}%
+  \titlespacing*{\chapter}{0pt}{0pt}{18pt}%
+  \renewcommand{\bibname}{منابع}%
+  \phantomsection
+  \addcontentsline{toc}{chapter}{منابع}%
+  \bibliographystyle{unsrt-fa}%
+  \bibliography{texFiles/References}%
+  \endgroup
+}
