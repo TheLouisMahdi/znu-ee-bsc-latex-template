@@ -17,22 +17,54 @@
 \RequirePackage[hidelinks]{hyperref}
 \RequirePackage{xepersian}
 
-\ifznu@portablefonts
+\newcommand{\znu@amiri}{%
   \settextfont[Path=fonts/,BoldFont=Amiri-Bold.ttf,
-    ItalicFont=Amiri-Italic.ttf,BoldItalicFont=Amiri-BoldItalic.ttf]{Amiri-Regular.ttf}
-  \setlatintextfont{Latin Modern Roman}
-\else
-  \IfFileExists{fonts/local/BNazanin.ttf}{%
-    \settextfont[Path=fonts/local/,Scale=1.16,BoldFont=BNazanin-Bold.ttf]{BNazanin.ttf}%
+    ItalicFont=Amiri-Italic.ttf,BoldItalicFont=Amiri-BoldItalic.ttf]{Amiri-Regular.ttf}%
+}
+\newcommand{\znu@nazaninfiles}[2]{%
+  \settextfont[Path=fonts/local/,Scale=1.16,BoldFont=#2]{#1}%
+}
+\newif\ifznu@fontfiles
+\newcommand{\znu@iflocalfonts}[3]{%
+  \znu@fontfilestrue
+  \@for\znu@fontfile:=#1\do{%
+    \IfFileExists{fonts/local/\znu@fontfile}{}{\znu@fontfilesfalse}%
+  }%
+  \ifznu@fontfiles#2\else#3\fi
+}
+\newcommand{\znu@setpersian}{%
+  \znu@iflocalfonts{BNAZANIN.TTF,BNAZNNBD.TTF}{%
+    \znu@nazaninfiles{BNAZANIN.TTF}{BNAZNNBD.TTF}%
   }{%
-    \settextfont[Scale=1.16,BoldFont={B Nazanin Bold}]{B Nazanin}%
-  }
-  \IfFileExists{fonts/local/TimesNewRoman.ttf}{%
+    \znu@iflocalfonts{BNazanin.ttf,BNazanin-Bold.ttf}{%
+      \znu@nazaninfiles{BNazanin.ttf}{BNazanin-Bold.ttf}%
+    }{%
+      \IfFontExistsTF{B Nazanin}{%
+        \IfFontExistsTF{B Nazanin Bold}{%
+          \settextfont[Scale=1.16,BoldFont={B Nazanin Bold}]{B Nazanin}%
+        }{\znu@amiri}%
+      }{\znu@amiri}%
+    }%
+  }%
+}
+\newcommand{\znu@setlatin}{%
+  \znu@iflocalfonts{TimesNewRoman.ttf,TimesNewRoman-Bold.ttf,TimesNewRoman-Italic.ttf,TimesNewRoman-BoldItalic.ttf}{%
     \setlatintextfont[Path=fonts/local/,BoldFont=TimesNewRoman-Bold.ttf,
       ItalicFont=TimesNewRoman-Italic.ttf,BoldItalicFont=TimesNewRoman-BoldItalic.ttf]{TimesNewRoman.ttf}%
   }{%
-    \setlatintextfont{Times New Roman}%
-  }
+    \IfFontExistsTF{Times New Roman}{%
+      \setlatintextfont{Times New Roman}%
+    }{%
+      \setlatintextfont{Latin Modern Roman}%
+    }%
+  }%
+}
+\ifznu@portablefonts
+  \znu@amiri
+  \setlatintextfont{Latin Modern Roman}
+\else
+  \znu@setpersian
+  \znu@setlatin
 \fi
 \pdfstringdefDisableCommands{\def\lr#1{#1}}
 
